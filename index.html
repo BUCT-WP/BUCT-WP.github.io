@@ -1,60 +1,36 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <title>ChatGPT API</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://unpkg.com/@openai/openai-js-sdk@0.6.1"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.2/dist/sweetalert2.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.2/dist/sweetalert2.min.css" />
+	<meta charset="utf-8">
+	<title>ChatGPT Chatbot</title>
+	<style>
+		body {
+			font-family: sans-serif;
+			background-color: #f1f1f1;
+		}
+
+		#chatbot-container {
+			margin: 20px auto;
+			padding: 20px;
+			background-color: #fff;
+			box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+			border-radius: 5px;
+		}
+	</style>
+	<script src="https://cdn.jsdelivr.net/npm/@openai/chat-embed@1.0.1/dist/web/chat-embed.js"></script>
 </head>
 <body>
-    <div class="container">
-        <h1>ChatGPT API Demo</h1>
-        <div class="chatbox">
-            <div class="messages"></div>
-            <div class="inputbox">
-                <input type="text" placeholder="Type your message here..." class="message-input">
-                <button class="send-btn">Send</button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        const openai = new OpenAI('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');
-
-        $(document).ready(function() {
-            $('.send-btn').on('click', function() {
-                const message = $('.message-input').val();
-                if (message.trim() !== '') {
-                    $('.messages').append('<div class="user-message">' + message + '</div>');
-                    $('.message-input').val('');
-                    sendToChatGPT(message);
-                }
-            });
-        });
-
-        function sendToChatGPT(message) {
-            openai.complete({
-                engine: 'davinci',
-                prompt: 'User: ' + message + '\nAI:',
-                maxTokens: 100,
-                n: 1,
-                stop: '\n',
-            })
-            .then(function(response) {
-                const text = response.choices[0].text.trim();
-                $('.messages').append('<div class="chatbot-message">' + text + '</div>');
-            })
-            .catch(function(error) {
-                console.error(error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Something went wrong!',
-                });
-            });
-        }
-    </script>
+	<div id="chatbot-container"></div>
+	<script>
+		new OpenAIChatbot({
+			apiKey: 'YOUR_API_KEY_HERE',
+			container: document.getElementById('chatbot-container'),
+			engine: 'davinci',
+			prompt: 'Hello',
+			placeholder: 'Start typing here...',
+			height: '500px',
+			width: '400px'
+		});
+	</script>
 </body>
 </html>
