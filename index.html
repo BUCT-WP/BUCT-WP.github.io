@@ -1,12 +1,60 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>nihao</title>
+    <title>ChatGPT API</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://unpkg.com/@openai/openai-js-sdk@0.6.1"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.2/dist/sweetalert2.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.2/dist/sweetalert2.min.css" />
 </head>
 <body>
-    niao
+    <div class="container">
+        <h1>ChatGPT API Demo</h1>
+        <div class="chatbox">
+            <div class="messages"></div>
+            <div class="inputbox">
+                <input type="text" placeholder="Type your message here..." class="message-input">
+                <button class="send-btn">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const openai = new OpenAI('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');
+
+        $(document).ready(function() {
+            $('.send-btn').on('click', function() {
+                const message = $('.message-input').val();
+                if (message.trim() !== '') {
+                    $('.messages').append('<div class="user-message">' + message + '</div>');
+                    $('.message-input').val('');
+                    sendToChatGPT(message);
+                }
+            });
+        });
+
+        function sendToChatGPT(message) {
+            openai.complete({
+                engine: 'davinci',
+                prompt: 'User: ' + message + '\nAI:',
+                maxTokens: 100,
+                n: 1,
+                stop: '\n',
+            })
+            .then(function(response) {
+                const text = response.choices[0].text.trim();
+                $('.messages').append('<div class="chatbot-message">' + text + '</div>');
+            })
+            .catch(function(error) {
+                console.error(error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Something went wrong!',
+                });
+            });
+        }
+    </script>
 </body>
 </html>
