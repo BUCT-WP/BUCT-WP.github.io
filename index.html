@@ -1,36 +1,69 @@
 <!DOCTYPE html>
 <html>
-<head>
-	<meta charset="utf-8">
-	<title>ChatGPT Chatbot</title>
-	<style>
-		body {
-			font-family: sans-serif;
-			background-color: #f1f1f1;
-		}
+  <head>
+    <title>ChatGPT Example</title>
+    <style>
+      /* Add some basic styling to the chat messages */
+      .chat-message {
+        padding: 5px;
+        margin: 5px;
+        border-radius: 5px;
+        background-color: #f1f1f1;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>ChatGPT Example</h1>
 
-		#chatbot-container {
-			margin: 20px auto;
-			padding: 20px;
-			background-color: #fff;
-			box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-			border-radius: 5px;
-		}
-	</style>
-	<script src="https://cdn.jsdelivr.net/npm/@openai/chat-embed@1.0.1/dist/web/chat-embed.js"></script>
-</head>
-<body>
-	<div id="chatbot-container"></div>
-	<script>
-		new OpenAIChatbot({
-			apiKey: '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',
-			container: document.getElementById('chatbot-container'),
-			engine: 'davinci',
-			prompt: 'Hello',
-			placeholder: 'Start typing here...',
-			height: '500px',
-			width: '400px'
-		});
-	</script>
-</body>
+    <div id="chat-window"></div>
+
+    <input type="text" id="user-input" placeholder="Type your message here" />
+    <button id="submit-button">Send</button>
+
+    <script>
+      // Your ChatGPT API credentials
+      const API_KEY = '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';
+      const API_URL = 'https://api.openai.com/v1/engines/davinci-codex/completions';
+
+      // Handle user input and display chat messages
+      const chatWindow = document.getElementById('chat-window');
+      const userInput = document.getElementById('user-input');
+      const submitButton = document.getElementById('submit-button');
+
+      submitButton.addEventListener('click', async () => {
+        // Get the user input
+        const userInputText = userInput.value;
+
+        // Clear the input field
+        userInput.value = '';
+
+        // Display the user's message in the chat window
+        const userMessage = document.createElement('div');
+        userMessage.classList.add('chat-message');
+        userMessage.innerText = `You: ${userInputText}`;
+        chatWindow.appendChild(userMessage);
+
+        // Call the ChatGPT API to generate a response
+        const response = await fetch(API_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${API_KEY}`
+          },
+          body: JSON.stringify({
+            'prompt': userInputText,
+            'max_tokens': 50,
+            'temperature': 0.7
+          })
+        });
+
+        // Display the AI's response in the chat window
+        const responseData = await response.json();
+        const aiMessage = document.createElement('div');
+        aiMessage.classList.add('chat-message');
+        aiMessage.innerText = `AI: ${responseData.choices[0].text}`;
+        chatWindow.appendChild(aiMessage);
+      });
+    </script>
+  </body>
 </html>
